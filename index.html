@@ -67,7 +67,6 @@
     <button id="commande-btn" onclick="passerCommande()" disabled>Passer la commande</button>
 
     <script>
-        // Menu initial
         const menu = [
             { id: 1, nom: "Bowl Falafel", prix: 8.5 },
             { id: 2, nom: "Bowl Poulet", prix: 9.5 },
@@ -76,7 +75,7 @@
 
         let commande = [];
 
-        // Affichage du menu
+        // Affiche le menu
         const menuDiv = document.getElementById("menu");
         menu.forEach(item => {
             const div = document.createElement("div");
@@ -89,18 +88,15 @@
             menuDiv.appendChild(div);
         });
 
-        // Ajouter un item à la commande
         function ajouterCommande(id) {
             const item = menu.find(m => m.id === id);
             commande.push(item);
             afficherCommande();
         }
 
-        // Afficher le résumé de commande
         function afficherCommande() {
             const commandeDiv = document.getElementById("commande-resume");
             commandeDiv.innerHTML = ""; // Vider l'affichage précédent
-
             let total = 0;
 
             commande.forEach(item => {
@@ -119,15 +115,13 @@
             toggleBoutonCommande();
         }
 
-        // Activer/Désactiver le bouton de commande
         function toggleBoutonCommande() {
             const bouton = document.getElementById("commande-btn");
             bouton.disabled = commande.length === 0;
         }
 
-        // Passer la commande
         function passerCommande() {
-            if (!commande.length) {
+            if (commande.length === 0) {
                 alert("Votre commande est vide.");
                 return;
             }
@@ -137,11 +131,16 @@
             bouton.disabled = true;
 
             const url = "https://script.google.com/macros/s/AKfycbwJiosYmQgF53YGSM7CrP-e9YZIN9zRJmFfKQyz3LLebAxG-CYr8xySTQs6AY3X1eBE-w/exec";
-
             const payload = {
-                commande: commande.map(item => ({ id: item.id, nom: item.nom, prix: item.prix })),
-                date: new Date().toISOString(),
+                commande: commande.map(item => ({
+                    id: item.id,
+                    nom: item.nom,
+                    prix: item.prix
+                })),
+                date: new Date().toISOString()
             };
+
+            console.log("Données envoyées :", payload);
 
             fetch(url, {
                 method: "POST",
@@ -157,6 +156,7 @@
                 return response.json();
             })
             .then(data => {
+                console.log("Réponse du serveur :", data);
                 if (data.status === "success") {
                     alert("Commande passée avec succès !");
                     commande = [];
